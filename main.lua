@@ -2,7 +2,7 @@ local sti = require "modules/sti"
 
 function love.load()
 
-    mv_force_delta = 3; 
+    mv_force_delta = 7; 
 
     image = love.graphics.newImage("assets/characters/player.png")
     quad = love.graphics.newQuad(0, 0, 48, 64, image:getDimensions())
@@ -29,11 +29,16 @@ function love.load()
         },
         mv_force = {
             x = 0,
-            y = 0,
+            y = 0
+        },
+        fr_force = {
+            x = 0,
+            y = 0
         }
     }
 
     sprites.update = function(self, dt)
+        -- calculate movement
         direction = {
             horizontal = 0,
             vertical = 0
@@ -74,9 +79,38 @@ function love.load()
         self.player.mv_force.x = mv_force_delta * direction.horizontal
         self.player.mv_force.y = mv_force_delta * direction.vertical
 
-        self.player.speed.x = self.player.speed.x + self.player.mv_force.x * dt
-        self.player.speed.y = self.player.speed.y + self.player.mv_force.y * dt
+        self.player.speed.x = self.player.speed.x + self.player.mv_force.x * dt * 100
+        self.player.speed.y = self.player.speed.y + self.player.mv_force.y * dt * 100
 
+        -- calculate friction
+        if self.player.speed.x ~= 0 then
+            self.player.fr_force.x = 9.8 * 0.5 * self.player.speed.x / math.sqrt(self.player.speed.x^2 + self.player.speed.y^2) * 100
+        end
+        if self.player.speed.y ~= 0 then
+            self.player.fr_force.y = 9.8 * 0.5 * self.player.speed.y / math.sqrt(self.player.speed.x^2 + self.player.speed.y^2) * 100
+        end
+
+        if self.player.speed.x ~= 0 then
+            if self.player.speed.x < 0 and self.player.speed.x - self.player.fr_force.x * dt > 0 then
+                self.player.speed.x = 0
+            elseif self.player.speed.x > 0 and self.player.speed.x - self.player.fr_force.x * dt < 0 then
+                self.player.speed.x = 0
+            else
+                self.player.speed.x = self.player.speed.x - self.player.fr_force.x * dt
+            end
+        end
+
+        if self.player.speed.y ~= 0 then
+            if self.player.speed.y < 0 and self.player.speed.y - self.player.fr_force.y * dt > 0 then
+                self.player.speed.y = 0
+            elseif self.player.speed.y > 0 and self.player.speed.y - self.player.fr_force.y * dt < 0 then
+                self.player.speed.y = 0
+            else
+                self.player.speed.y = self.player.speed.y - self.player.fr_force.y * dt
+            end
+        end
+
+        --calculate position
         self.player.x = self.player.x + self.player.speed.x * dt
         self.player.y = self.player.y + self.player.speed.y * dt
     end

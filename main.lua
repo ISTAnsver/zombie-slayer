@@ -5,7 +5,14 @@ function love.load()
     mv_force_delta = 7; 
 
     image = love.graphics.newImage("assets/characters/player.png")
-    quad = love.graphics.newQuad(0, 0, 48, 64, image:getDimensions())
+
+    down = love.graphics.newQuad(48 * 0, 64 * 0, 48, 64, image:getDimensions())
+    left = love.graphics.newQuad(48 * 0, 64 * 1, 48, 64, image:getDimensions())
+    right = love.graphics.newQuad(48 * 0, 64 * 2, 48, 64, image:getDimensions())
+    forward = love.graphics.newQuad(48 * 0, 64 * 3, 48, 64, image:getDimensions())
+
+    current_quad = down
+
     map = sti("assets/levels/level_0.lua")
     spawn = {}
     for k, object in pairs(map.objects) do
@@ -16,7 +23,6 @@ function love.load()
     end
 
     local sprites = map:addCustomLayer("Sprites", 4)
-    local sw, sh = quad:getTextureDimensions()
     sprites.player = {
         sprite = image,
         x = spawn.x,
@@ -139,6 +145,21 @@ function love.load()
     end
 
     sprites.draw = function(self)
+        local quad = current_quad
+        if direction.horizontal == 1 and sprites.player.speed.x > 0 then
+            quad = right
+        end
+        if direction.horizontal == -1 and sprites.player.speed.x < 0 then
+            quad = left
+        end
+        if direction.vertical == 1 and sprites.player.speed.y > 0 then
+            quad = down
+        end
+        if direction.vertical == -1 and sprites.player.speed.y < 0 then
+            quad = forward
+        end
+        current_quad = quad
+
 		love.graphics.draw(
             self.player.sprite,
             quad,
@@ -150,11 +171,6 @@ function love.load()
 			self.player.ox,
 			self.player.oy
 		)
-
-		-- Temporarily draw a point at our location so we know
-		-- that our sprite is offset properly
-		love.graphics.setPointSize(5)
-		love.graphics.points(math.floor(self.player.x), math.floor(self.player.y))
 	end
 
 end

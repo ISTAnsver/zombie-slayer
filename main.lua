@@ -27,6 +27,10 @@ function love.load()
             x = 0,
             y = 0
         },
+        max_speed = {
+            x = 100,
+            y = 100
+        },
         mv_force = {
             x = 0,
             y = 0
@@ -45,36 +49,41 @@ function love.load()
         }
         if love.keyboard.isDown("w") then
             if direction.horizontal == 0 then
-                direction.vertical = -1
+                direction.vertical = direction.vertical - 1
             else
-                direction.vertical = -0.5
+                direction.vertical = direction.vertical - 0.5
                 direction.horizontal = direction.horizontal * 0.5
             end
         end
         if love.keyboard.isDown("s") then
             if direction.horizontal == 0 then
-                direction.vertical = 1
+                direction.vertical = direction.vertical + 1
             else
-                direction.vertical = 0.5
+                direction.vertical = direction.vertical + 0.5
                 direction.horizontal = direction.horizontal * 0.5
             end
         end
         if love.keyboard.isDown("d") then
             if direction.vertical == 0 then
-                direction.horizontal = 1
+                direction.horizontal = direction.horizontal + 1
             else
-                direction.horizontal = 0.5
+                direction.horizontal = direction.horizontal + 0.5
                 direction.vertical = direction.vertical * 0.5
             end
         end
         if love.keyboard.isDown("a") then
             if direction.vertical == 0 then
-                direction.horizontal = -1
+                direction.horizontal = direction.horizontal - 1
             else
-                direction.horizontal = -0.5
+                direction.horizontal = direction.horizontal - 0.5
                 direction.vertical = direction.vertical * 0.5
             end
         end
+
+        direction_affection = {
+            horizontal = direction.horizontal ~= 0 and math.abs(direction.horizontal) or 1,
+            vertical = direction.vertical ~= 0 and math.abs(direction.vertical) or 1
+        }
 
         self.player.mv_force.x = mv_force_delta * direction.horizontal
         self.player.mv_force.y = mv_force_delta * direction.vertical
@@ -84,10 +93,10 @@ function love.load()
 
         -- calculate friction
         if self.player.speed.x ~= 0 then
-            self.player.fr_force.x = 9.8 * 0.5 * self.player.speed.x / math.sqrt(self.player.speed.x^2 + self.player.speed.y^2) * 100
+            self.player.fr_force.x = 9.8 * direction_affection.horizontal * 0.5 * self.player.speed.x / math.sqrt(self.player.speed.x^2 + self.player.speed.y^2) * 100
         end
         if self.player.speed.y ~= 0 then
-            self.player.fr_force.y = 9.8 * 0.5 * self.player.speed.y / math.sqrt(self.player.speed.x^2 + self.player.speed.y^2) * 100
+            self.player.fr_force.y = 9.8 * direction_affection.vertical * 0.5 * self.player.speed.y / math.sqrt(self.player.speed.x^2 + self.player.speed.y^2) * 100
         end
 
         if self.player.speed.x ~= 0 then
@@ -108,6 +117,20 @@ function love.load()
             else
                 self.player.speed.y = self.player.speed.y - self.player.fr_force.y * dt
             end
+        end
+
+        -- limit max speed
+        if self.player.speed.x > self.player.max_speed.x * direction_affection.horizontal then
+            self.player.speed.x = self.player.max_speed.x * direction_affection.horizontal
+        end
+        if self.player.speed.x < - self.player.max_speed.x * direction_affection.horizontal then
+            self.player.speed.x = - self.player.max_speed.x * direction_affection.horizontal
+        end
+        if self.player.speed.y > self.player.max_speed.y * direction_affection.vertical then
+            self.player.speed.y = self.player.max_speed.y * direction_affection.vertical
+        end
+        if self.player.speed.y < - self.player.max_speed.y * direction_affection.vertical then
+            self.player.speed.y = - self.player.max_speed.y * direction_affection.vertical
         end
 
         --calculate position

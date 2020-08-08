@@ -6,6 +6,7 @@ function Vec2:new(o)
     self.__index = self
     self.__add = self.add
     self.__unm = self.reverse
+    self.__mul = self.multiply
     return o
 end
 
@@ -15,4 +16,9 @@ end
 
 function Vec2:add(vec)
     return Vec2:new{ x = self.x + vec.x, y = self.y + vec.y }
+end
+
+function Vec2:multiply(num)
+    assert(type(num) == "number", "Multiply support only number argument")
+    return Vec2:new{ x = self.x * num, y = self.y * num }
 end

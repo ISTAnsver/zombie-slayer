@@ -5,6 +5,7 @@ function Vec2:new(o)
     setmetatable(o, self)
     self.__index = self
     self.__add = self.add
+    self.__sub = self.subtract
     self.__unm = self.reverse
     self.__mul = self.multiply
     return o
@@ -16,6 +17,10 @@ end
 
 function Vec2:add(vec)
     return Vec2:new{ x = self.x + vec.x, y = self.y + vec.y }
+end
+
+function Vec2:subtract(vec)
+    return Vec2:new{ x = self.x - vec.x, y = self.y - vec.y }
 end
 
 function Vec2:multiply(num)

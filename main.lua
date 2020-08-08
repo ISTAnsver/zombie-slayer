@@ -1,4 +1,5 @@
 local sti = require "modules/sti"
+local sprite_loader = require "sprite-loader/sprite-loader"
 
 function love.load()
 
@@ -6,12 +7,13 @@ function love.load()
 
     image = love.graphics.newImage("assets/characters/player.png")
 
-    down = love.graphics.newQuad(48 * 0, 64 * 0, 48, 64, image:getDimensions())
-    left = love.graphics.newQuad(48 * 0, 64 * 1, 48, 64, image:getDimensions())
-    right = love.graphics.newQuad(48 * 0, 64 * 2, 48, 64, image:getDimensions())
-    forward = love.graphics.newQuad(48 * 0, 64 * 3, 48, 64, image:getDimensions())
+    sprites = sprite_loader.load(image, { cols = 4, rows = 4})
 
-    current_quad = down
+    down = sprites[1][1]
+    left = sprites[2][1]
+    right = sprites[3][1]
+    forward = sprites[4][1]
+    current_sprite = down
 
     map = sti("assets/levels/level_0.lua")
     spawn = {}
@@ -22,8 +24,8 @@ function love.load()
         end
     end
 
-    local sprites = map:addCustomLayer("Sprites", 4)
-    sprites.player = {
+    local objects = map:addCustomLayer("Objects", 4)
+    objects.player = {
         sprite = image,
         x = spawn.x,
         y = spawn.y,
@@ -47,7 +49,7 @@ function love.load()
         }
     }
 
-    sprites.update = function(self, dt)
+    objects.update = function(self, dt)
         -- calculate movement
         direction = {
             horizontal = 0,
@@ -144,33 +146,22 @@ function love.load()
         self.player.y = self.player.y + self.player.speed.y * dt
     end
 
-    sprites.draw = function(self)
-        local quad = current_quad
-        if direction.horizontal == 1 and sprites.player.speed.x > 0 then
-            quad = right
+    objects.draw = function(self)
+        local sprite = current_sprite
+        if direction.horizontal == 1 and objects.player.speed.x > 0 then
+            sprite = right
         end
-        if direction.horizontal == -1 and sprites.player.speed.x < 0 then
-            quad = left
+        if direction.horizontal == -1 and objects.player.speed.x < 0 then
+            sprite = left
         end
-        if direction.vertical == 1 and sprites.player.speed.y > 0 then
-            quad = down
+        if direction.vertical == 1 and objects.player.speed.y > 0 then
+            sprite = down
         end
-        if direction.vertical == -1 and sprites.player.speed.y < 0 then
-            quad = forward
+        if direction.vertical == -1 and objects.player.speed.y < 0 then
+            sprite = forward
         end
-        current_quad = quad
-
-		love.graphics.draw(
-            self.player.sprite,
-            quad,
-			math.floor(self.player.x),
-			math.floor(self.player.y),
-			0,
-			1,
-			1,
-			self.player.ox,
-			self.player.oy
-		)
+        current_sprite = sprite
+        sprite:draw({ x = objects.player.x, y = objects.player.y })
 	end
 
 end

@@ -31,3 +31,8 @@ end
 function Vec2:length()
     return math.sqrt(self.x^2 + self.y^2)
 end
+
+function Vec2:unit()
+    local length = Vec2.length(self);
+    return Vec2:new{ x = self.x / length, y = self.y / length }
+end

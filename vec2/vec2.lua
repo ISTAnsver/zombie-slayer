@@ -27,3 +27,7 @@ function Vec2:multiply(num)
     assert(type(num) == "number", "Multiply support only number argument")
     return Vec2:new{ x = self.x * num, y = self.y * num }
 end
+
+function Vec2:length()
+    return math.sqrt(self.x^2 + self.y^2)
+end

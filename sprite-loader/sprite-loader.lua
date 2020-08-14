@@ -1,6 +1,6 @@
 require "sprite-loader/sprite"
 
-local function load(image, grid)
+local function load(image, grid) -- should take sprite atlas description (image, cols, rows, and array of animation names) and return sprite atlas
     width, height = image:getDimensions()
     column_widht = width / grid.cols
     row_height = height / grid.rows

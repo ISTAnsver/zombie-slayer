@@ -1,7 +1,9 @@
+require "vec2/vec2"
+
 Object = {}
 
 function Object:new(o)
-    o = o or { forces = {} }
+    o = o or { forces = {}, velocity = Vec2:new{0, 0}, position = Vec2:new{0, 0} }
     setmetatable(o, self)
     self.__index = self
     return o

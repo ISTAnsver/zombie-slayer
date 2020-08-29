@@ -15,6 +15,8 @@ function love.load()
     LEFT = sprites[2][1]
     RIGTH = sprites[3][1]
     FORWARD = sprites[4][1]
+
+    MAP = sti("assets/levels/level_0.lua")
 end
 
 function love.update(dt)
@@ -44,7 +46,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    map:draw(40, 0, 2, 2)
+    MAP:draw(40, 0, 2, 2)
     love.graphics.push()
     love.graphics.scale(2, 2)
     WORLD:draw()

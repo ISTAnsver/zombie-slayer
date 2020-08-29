@@ -15,17 +15,26 @@ function Vec2:reverse()
     return Vec2:new{ x = -self.x, y = -self.y }
 end
 
-function Vec2:add(vec)
-    return Vec2:new{ x = self.x + vec.x, y = self.y + vec.y }
+function Vec2.add(vec2l, vec2r)
+    return Vec2:new{ x = vec2l.x + vec2r.x, y = vec2l.y + vec2r.y }
 end
 
-function Vec2:subtract(vec)
-    return Vec2:new{ x = self.x - vec.x, y = self.y - vec.y }
+function Vec2.subtract(vec2l, vec2r)
+    return Vec2:new{ x = vec2l.x - vec2r.x, y = vec2l.y - vec2r.y }
 end
 
-function Vec2:multiply(num)
-    assert(type(num) == "number", "Multiply support only number argument")
-    return Vec2:new{ x = self.x * num, y = self.y * num }
+function Vec2.multiply(argl, argr)
+    local num, vec2
+    assert((type(argl) == "number" or type(argr) == "number") and type(argl) ~= type(argr), "Multiply support only number argument")
+    if (type(argl) == "number") then
+        num = argl
+        vec2 = argr
+    else
+        num = argr
+        vec2 = argl
+    end
+
+    return Vec2:new{ x = vec2.x * num, y = vec2.y * num }
 end
 
 function Vec2:length()

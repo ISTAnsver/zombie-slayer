@@ -1,7 +1,7 @@
 Sprite = {}
 
 function Sprite:new(o)
-    o = o or {}
+    o = o or { image = nil, quad = nil, offset = nil }
     setmetatable(o, self)
     self.__index = self
     return o

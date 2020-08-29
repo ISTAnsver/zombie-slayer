@@ -18,18 +18,20 @@ function World:setMeter(pixels)
 end
 
 function World:update(dt)
-    for i = 1,#self.objects do
+    for i = 1,table.getn(self.objects) do
         local object = self.objects[i]
         local forces = object:popForces()
-        for j = 1,#forces do
+        for j = 1,table.getn(forces) do
             object.velocity = object.velocity + forces[j] * self.meter * dt
         end
 
+       -- print(object.velocity.x .. " " .. object.velocity.y)
+
         local direction = self.objects[i].velocity:unit()
-        local fr_force = Vec2:new{0, 0}
+        local fr_force = Vec2:new()
 
         if object.velocity.x ~= 0 or object.velocity.y ~= 0 then
-            fr_force = self.gravity * 0.5 * direction * 100
+            fr_force = self.gravity * 0.5 * -direction * self.meter
         end
 
         if object.velocity.x ~= 0 then
@@ -51,6 +53,14 @@ function World:update(dt)
                 object.velocity.y = object.velocity.y + fr_force.y * dt
             end
         end
+
+        object.position = object.position + object.velocity * dt
+    end
+end
+
+function World:draw()
+    for i = 1,table.getn(self.objects) do
+        self.objects[i]:draw()
     end
 end
 

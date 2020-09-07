@@ -30,12 +30,6 @@ function love.load()
         local body = entity:getComponents("body")[1]
         local sprite = entity:getComponents("sprite")[1]
         local image = love.graphics.newImage(sprite.image)
-        for k, v in pairs(body) do
-            print(k)
-        end
-        print(body.position)
-        print(sprite.image)
-        print(sprite.offset.x)
         love.graphics.draw(
             image,
             sprite.quad,

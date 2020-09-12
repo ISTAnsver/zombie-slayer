@@ -7,16 +7,18 @@ require "esc/component"
 require "esc/system"
 require "esc/engine"
 
+require "components/body"
+require "systems/world"
+
 ENGINE = Engine:new()
+
+BODY_FACTORY = require "components/body"
+
+BODY = BODY_FACTORY.create_body_component()
+BODY.data.velocity_limit = 100
 
 function love.load()
     local entity = Entity:new()
-    local body_component = Component:new{
-        name = "body",
-        data = {
-            position = { x = 100, y = 100 }
-        }
-    }
     local sprite_component = Component:new{
         name = "sprite",
         data = {
@@ -27,8 +29,8 @@ function love.load()
     }
     local renderer_system = System:new{ requirements = { "body", "sprite" } }
     function renderer_system:draw(entity)
-        local body = entity:getComponents("body")[1]
-        local sprite = entity:getComponents("sprite")[1]
+        local body = entity:getComponent("body")
+        local sprite = entity:getComponent("sprite")
         local image = love.graphics.newImage(sprite.image)
         love.graphics.draw(
             image,
@@ -42,9 +44,9 @@ function love.load()
             sprite.offset.y
         )
     end
-    entity:addComponent(body_component)
+    entity:addComponent(BODY)
     entity:addComponent(sprite_component)
-    ENGINE:load({ renderer_system }, { entity })
+    ENGINE:load({ renderer_system, WorldSystem:new() }, { entity })
     -- local image = love.graphics.newImage("assets/characters/player.png")
     -- local sprites = sprite_loader.load(image, { cols = 4, rows = 4})
     
@@ -61,28 +63,29 @@ function love.load()
 end
 
 function love.update(dt)
-    -- local direction = Vec2:new()
-    -- if love.keyboard.isDown("w") then
-    --     direction.y = direction.y - 1
-    --     PLAYER.sprite = FORWARD
-    -- end
-    -- if love.keyboard.isDown("s") then
-    --     direction.y = direction.y + 1
-    --     PLAYER.sprite = DOWN
-    -- end
-    -- if love.keyboard.isDown("d") then
-    --     direction.x = direction.x + 1
-    --     PLAYER.sprite = RIGTH
-    -- end
-    -- if love.keyboard.isDown("a") then
-    --     direction.x = direction.x - 1
-    --     PLAYER.sprite = LEFT
-    -- end
+    local direction = Vec2:new()
+    if love.keyboard.isDown("w") then
+        direction.y = direction.y - 1
+        -- PLAYER.sprite = FORWARD
+    end
+    if love.keyboard.isDown("s") then
+        direction.y = direction.y + 1
+        -- PLAYER.sprite = DOWN
+    end
+    if love.keyboard.isDown("d") then
+        direction.x = direction.x + 1
+        -- PLAYER.sprite = RIGTH
+    end
+    if love.keyboard.isDown("a") then
+        direction.x = direction.x - 1
+        -- PLAYER.sprite = LEFT
+    end
 
-    -- local directions = (math.abs(direction.x) + math.abs(direction.y))
-    -- local value = directions > 1 and 4.9497474683058 or 7
-    -- local force = Vec2:new{ x = value * direction.x, y = value * direction.y }
-    -- PLAYER:applyForce(force)
+    local directions = (math.abs(direction.x) + math.abs(direction.y))
+    local value = directions > 1 and 4.9497474683058 or 7
+    local force = Vec2:new{ x = value * direction.x, y = value * direction.y }
+    table.insert(BODY.data.forces, force)
+    ENGINE:update(dt)
     -- WORLD:update(dt)
 end
 

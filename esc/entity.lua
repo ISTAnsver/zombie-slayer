@@ -19,8 +19,14 @@ function Entity:addComponent(component)
     table.insert(self.components[component.name], ComponentDataProxy:new(component))
 end
 
+-- use to get list of components a specified type
 function Entity:getComponents(name)
     return self.components[name]
+end
+
+-- use if you sure that entity has exactly one component a specified type
+function Entity:getComponent(name)
+    return self.components[name][1]
 end
 
 function Entity:removeComponent(component)

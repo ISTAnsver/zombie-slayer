@@ -16,8 +16,8 @@ function System:match(entity)
     return true
 end
 
-function System:update(dt, entity)
+function System:update(dt, entities)
 end
 
-function System:draw(entity)
+function System:draw(entities)
 end

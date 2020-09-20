@@ -13,21 +13,25 @@ function Engine:load(systems, entities)
 end
 
 function Engine:update(dt)
-    for i, entity in ipairs(self.entities) do
-        for j, system in ipairs(self.systems) do
+    for j, system in ipairs(self.systems) do
+        local entities = {}
+        for i, entity in ipairs(self.entities) do
             if system:match(entity) then
-                system:update(dt, entity)
+                table.insert(entities, entity)
             end
         end
+        system:update(dt, entities)
     end
 end
 
 function Engine:draw()
-    for i, entity in ipairs(self.entities) do
-        for j, system in ipairs(self.systems) do
+    for j, system in ipairs(self.systems) do
+        local entities = {}
+        for i, entity in ipairs(self.entities) do
             if system:match(entity) then
-                system:draw(entity)
+                table.insert(entities, entity)
             end
         end
+        system:draw(entities);
     end
 end

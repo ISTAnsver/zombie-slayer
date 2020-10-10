@@ -8,7 +8,8 @@ require "esc/system"
 require "esc/engine"
 
 require "systems/world"
-require "systems/collision"
+require "systems/collision/collision"
+require "systems/collision/collision-notifier"
 
 ENGINE = Engine:new()
 
@@ -59,7 +60,9 @@ function love.load()
     })
     entity_2:addComponent(sprite_component)
     entity_2:addComponent(RECT_FACTORY.create_rect_component{ width = 48, height = 64 })
-    ENGINE:load({ renderer_system, WorldSystem:new(), CollisionSystem:new() }, { entity, entity_2 })
+    local world_system = WorldSystem:new()
+    local collision_notifier = CollisionNotifier:new{ renderer_system, world_system }
+    ENGINE:load({ renderer_system, world_system, CollisionSystem:new{ collision_notifier = collision_notifier } }, { entity, entity_2 })
     -- local image = love.graphics.newImage("assets/characters/player.png")
     -- local sprites = sprite_loader.load(image, { cols = 4, rows = 4})
     

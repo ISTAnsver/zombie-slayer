@@ -3,7 +3,8 @@ require "esc/system"
 CollisionSystem = System:new{ requirements = { "body", "rect" } }
 
 function CollisionSystem:new(o)
-    o = o or {}
+    assert(o, "cannot create CollisionSystem ctor argument is nil")
+    assert(o.collision_notifier, "cannot create CollisionSystem table hasn't 'collision_notifier' field")
     setmetatable(o, self)
     self.__index = self
     return o
@@ -63,7 +64,8 @@ function CollisionSystem:update(dt, entities)
                     end
                     body_1.velocity.y = 0
                 end
-                print("Collision detected!")
+
+                self.collision_notifier:notify(entity_1, entity_2)
             end
         end
     end

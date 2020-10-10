@@ -16,6 +16,6 @@ end
 
 function CollisionNotifier:notify(entity_1, entity_2)
     for k, system in pairs(self.systems) do
-        system.onCollision(entity_1, entity_2)
+        system:onCollision(entity_1, entity_2)
     end
 end

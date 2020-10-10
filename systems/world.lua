@@ -64,6 +64,10 @@ function WorldSystem:update(dt, entities)
     end
 end
 
+function WorldSystem:onCollision(entity_1, entity_2)
+    -- do physic changes here (like velocity changing and so on) in the next iteration
+end
+
 function WorldSystem:setGravity(number)
     self.gravity = number
 end

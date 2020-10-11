@@ -101,6 +101,7 @@ function love.update(dt)
     local value = directions > 1 and 4.9497474683058 or 7
     local force = Vec2:new{ x = value * direction.x, y = value * direction.y }
     table.insert(BODY.data.forces, force)
+    ENGINE:input()
     ENGINE:update(dt)
     -- WORLD:update(dt)
 end

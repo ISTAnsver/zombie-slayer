@@ -1,15 +1,20 @@
 System = {}
 
 function System:new(o)
-    o = o or { requirements = {} }
+    o = o or { requirements = { components = {}, tags = {} } }
     setmetatable(o, self)
     self.__index = self
     return o
 end
 
 function System:match(entity)
-    for i=1,table.getn(self.requirements) do
-        if entity:getComponents(self.requirements[i]) == nil then
+    for i=1,table.getn(self.requirements.components) do
+        if entity:getComponents(self.requirements.components[i]) == nil then
+            return false
+        end
+    end
+    for i=1,table.getn(self.requirements.tags) do
+        if not entity:hasTag(self.requirements.tags[i]) then
             return false
         end
     end

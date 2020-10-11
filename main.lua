@@ -30,7 +30,7 @@ function love.load()
             -- offset = { x = 24, y = 32 }
         }
     }
-    local renderer_system = System:new{ requirements = { "body", "sprite" } }
+    local renderer_system = System:new{ requirements = { components = { "body", "sprite" }, tags = {} } }
     function renderer_system:draw(entities)
         for i, entity in ipairs(entities) do
             local body = entity:getComponent("body")

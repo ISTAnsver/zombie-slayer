@@ -1,6 +1,6 @@
 require "esc/system"
 
-CollisionSystem = System:new{ requirements = { "body", "rect" } }
+CollisionSystem = System:new{ requirements = { components = { "body", "rect" }, tags = {} } }
 
 function CollisionSystem:new(o)
     assert(o, "cannot create CollisionSystem ctor argument is nil")

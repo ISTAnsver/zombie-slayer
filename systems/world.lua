@@ -1,7 +1,7 @@
 require "esc/system"
 require "vec2/vec2"
 
-WorldSystem = System:new{ requirements = { "body" } }
+WorldSystem = System:new{ requirements = { components = { "body" }, tags = {} } }
 
 function WorldSystem:new(o)
     o = o or { meter = 100, gravity = 9.8 }

@@ -16,6 +16,9 @@ function System:match(entity)
     return true
 end
 
+function System:input(entities)
+end
+
 function System:update(dt, entities)
 end
 

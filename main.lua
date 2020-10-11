@@ -8,6 +8,7 @@ require "esc/system"
 require "esc/engine"
 
 require "systems/world"
+require "systems/controller"
 require "systems/collision/collision"
 require "systems/collision/collision-notifier"
 
@@ -52,6 +53,7 @@ function love.load()
     entity:addComponent(BODY)
     entity:addComponent(sprite_component)
     entity:addComponent(RECT_FACTORY.create_rect_component{ width = 48, height = 64 })
+    entity:addTag("player")
     entity_2:addComponent(BODY_FACTORY.create_body_component{
         position = Vec2:new{ x = 300, y = 300 },
         velocity = Vec2:new(),
@@ -62,7 +64,7 @@ function love.load()
     entity_2:addComponent(RECT_FACTORY.create_rect_component{ width = 48, height = 64 })
     local world_system = WorldSystem:new()
     local collision_notifier = CollisionNotifier:new{ renderer_system, world_system }
-    ENGINE:load({ renderer_system, world_system, CollisionSystem:new{ collision_notifier = collision_notifier } }, { entity, entity_2 })
+    ENGINE:load({ renderer_system, world_system, ControllerSystem:new(), CollisionSystem:new{ collision_notifier = collision_notifier } }, { entity, entity_2 })
     -- local image = love.graphics.newImage("assets/characters/player.png")
     -- local sprites = sprite_loader.load(image, { cols = 4, rows = 4})
     
@@ -79,38 +81,10 @@ function love.load()
 end
 
 function love.update(dt)
-    local direction = Vec2:new()
-    if love.keyboard.isDown("w") then
-        direction.y = direction.y - 1
-        -- PLAYER.sprite = FORWARD
-    end
-    if love.keyboard.isDown("s") then
-        direction.y = direction.y + 1
-        -- PLAYER.sprite = DOWN
-    end
-    if love.keyboard.isDown("d") then
-        direction.x = direction.x + 1
-        -- PLAYER.sprite = RIGTH
-    end
-    if love.keyboard.isDown("a") then
-        direction.x = direction.x - 1
-        -- PLAYER.sprite = LEFT
-    end
-
-    local directions = (math.abs(direction.x) + math.abs(direction.y))
-    local value = directions > 1 and 4.9497474683058 or 7
-    local force = Vec2:new{ x = value * direction.x, y = value * direction.y }
-    table.insert(BODY.data.forces, force)
     ENGINE:input()
     ENGINE:update(dt)
-    -- WORLD:update(dt)
 end
 
 function love.draw()
     ENGINE:draw()
-    -- MAP:draw(40, 0, 2, 2)
-    -- love.graphics.push()
-    -- love.graphics.scale(2, 2)
-    -- WORLD:draw()
-    -- love.graphics.pop()
 end

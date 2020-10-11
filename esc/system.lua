@@ -14,7 +14,7 @@ function System:match(entity)
         end
     end
     for i=1,table.getn(self.requirements.tags) do
-        if not entity:hasTag(self.requirements.tags[i]) then
+        if entity:hasTag(self.requirements.tags[i]) == false then
             return false
         end
     end

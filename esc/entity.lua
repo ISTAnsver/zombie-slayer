@@ -50,7 +50,6 @@ function Entity:hasTag(tag)
     assert(type(tag) == "string", "Argument tag should be string value")
     for i=1,table.getn(self.tags) do
         if self.tags[i] == tag then
-            table.remove(self.tags, i)
             return true
         end
     end

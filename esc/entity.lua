@@ -5,7 +5,7 @@ local id = 0
 Entity = {}
 
 function Entity:new(o)
-    o = o or { id = id, components = {} }
+    o = o or { id = id, components = {}, tags = {} }
     id = id + 1
     setmetatable(o, self)
     self.__index = self
@@ -38,5 +38,32 @@ function Entity:removeComponent(component)
     end
     if table.getn(self.components[component.name]) == 0 then
         self.components[component.name] = nil
+    end
+end
+
+function Entity:addTag(tag)
+    assert(type(tag) == "string", "Argument tag should be string value")
+    table.insert(self.tags, tag)
+end
+
+function Entity:hasTag(tag)
+    assert(type(tag) == "string", "Argument tag should be string value")
+    for i=1,table.getn(self.tags) do
+        if self.tags[i] == tag then
+            table.remove(self.tags, i)
+            return true
+        end
+    end
+
+    return false
+end
+
+function Entity:removeTag(tag)
+    assert(type(tag) == "string", "Argument tag should be string value")
+    for i=1,table.getn(self.tags) do
+        if self.tags[i] == tag then
+            table.remove(self.tags, i)
+            return
+        end
     end
 end

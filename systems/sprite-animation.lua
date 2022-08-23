@@ -1,7 +1,7 @@
 require "esc/system"
 
 SpriteAnimationSystem = System:new{ requirements = { components = { "sprite", "animation" }, tags = {} } }
-local changeState
+local changeCurrent
 local updateSpriteFrame
 
 function SpriteAnimationSystem:new(o)

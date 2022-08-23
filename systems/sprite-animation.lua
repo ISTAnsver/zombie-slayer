@@ -1,6 +1,8 @@
 require "esc/system"
 
 SpriteAnimationSystem = System:new{ requirements = { components = { "sprite", "animation" }, tags = {} } }
+local changeState
+local updateSpriteFrame
 
 function SpriteAnimationSystem:new(o)
   o = o or { }
@@ -14,14 +16,37 @@ function SpriteAnimationSystem:update(dt, entities)
     local sprite = entity:getComponent("sprite")
     local animation = entity:getComponent("animation")
     
-    animation.passedTime = animation.passedTime + dt
-    if animation.passedTime >= animation.duration then
-      animation.currentFrameIndex = animation.currentFrameIndex + 1
-      if animation.currentFrameIndex > table.getn(animation.frames) then
-        animation.currentFrameIndex = 1
-      end
-      sprite.frame = animation.frames[animation.currentFrameIndex]
-      animation.passedTime = animation.passedTime - animation.duration
+    if animation.animator == nil then
+      goto continue
     end
+    
+    changeCurrent(animation, dt)
+    updateSpriteFrame(sprite, animation)
+    ::continue::
   end
+end
+
+changeCurrent = function(animation, dt)
+  local nextAnimation = animation:animator()
+  if animation.current ~= nextAnimation then
+    animation.passedTime = 0
+    animation.currentFrameIndex = 1
+    animation.current = nextAnimation
+  else
+    animation.passedTime = animation.passedTime + dt
+  end
+end
+
+updateSpriteFrame = function(sprite, animation)
+  if animation.passedTime < animation.duration then
+    return
+  end
+
+  local frames = animation[animation.current].frames
+  animation.currentFrameIndex = animation.currentFrameIndex + 1
+  if animation.currentFrameIndex > table.getn(frames) then
+    animation.currentFrameIndex = 1
+  end
+  sprite.frame = frames[animation.currentFrameIndex]
+  animation.passedTime = animation.passedTime - animation.duration
 end

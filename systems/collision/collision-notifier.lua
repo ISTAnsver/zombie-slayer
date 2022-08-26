@@ -14,8 +14,8 @@ function CollisionNotifier:new(systems)
     return o
 end
 
-function CollisionNotifier:notify(entity_1, entity_2)
+function CollisionNotifier:notify(entity1, entity2)
     for k, system in pairs(self.systems) do
-        system:onCollision(entity_1, entity_2)
+        system:onCollision(entity1, entity2)
     end
 end

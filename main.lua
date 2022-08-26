@@ -14,114 +14,29 @@ require "systems/controller"
 require "systems/collision/collision"
 require "systems/collision/collision-notifier"
 
-ENGINE = Engine:new()
+require "entities/player"
+require "entities/dummy"
 
-BODY_FACTORY = require "components/body"
-RECT_FACTORY = require "components/rect"
-SPRITE_FACTORY = require "components/sprite"
-ANIMATION_FACTORY = require "components/animation"
-
-BODY = BODY_FACTORY.create_body_component()
-BODY.data.velocity_limit = 100
+local engine = Engine:new()
 
 function love.load()
-  -- TODO preaload images and use the same preloaded in different places
-  local entity = Entity:new()
-  local entity_2 = Entity:new()
+  local player = Player:new()
+  local dummy = Dummy:new()
   
-  entity:addComponent(BODY)
-  entity:addComponent(SPRITE_FACTORY.createSpriteComponent{
-    src_image = love.graphics.newImage("assets/characters/player.png"),
-    frame = love.graphics.newQuad(10, 17, 27, 47, 192, 256)
-  })
-  entity:addComponent(RECT_FACTORY.create_rect_component{ width = 48, height = 64 })
-  entity:addComponent(ANIMATION_FACTORY.createAnimationComponent{
-    duration = 0.2,
-    idle = {
-      frames = {
-        love.graphics.newQuad(10,  17, 27, 47, 192, 256),
-      }
-    },
-    back = {
-      frames = {
-        love.graphics.newQuad(10,  17, 27, 47, 192, 256),
-        love.graphics.newQuad(58,  17, 27, 47, 192, 256),
-        love.graphics.newQuad(106, 17, 27, 47, 192, 256),
-        love.graphics.newQuad(154, 17, 27, 47, 192, 256),
-      }
-    },
-    left = {
-      frames = {
-        love.graphics.newQuad(10,  81, 27, 47, 192, 256),
-        love.graphics.newQuad(58,  81, 27, 47, 192, 256),
-        love.graphics.newQuad(106, 81, 27, 47, 192, 256),
-        love.graphics.newQuad(154, 81, 27, 47, 192, 256),
-      }
-    },
-    right = {
-      frames = {
-        love.graphics.newQuad(10,  145, 27, 47, 192, 256),
-        love.graphics.newQuad(58,  145, 27, 47, 192, 256),
-        love.graphics.newQuad(106, 145, 27, 47, 192, 256),
-        love.graphics.newQuad(154, 145, 27, 47, 192, 256),
-      }
-    },
-    forward = {
-      frames = {
-        love.graphics.newQuad(10,  209, 27, 47, 192, 256),
-        love.graphics.newQuad(58,  209, 27, 47, 192, 256),
-        love.graphics.newQuad(106, 209, 27, 47, 192, 256),
-        love.graphics.newQuad(154, 209, 27, 47, 192, 256),
-      }
-    },
-    animator = function(self)
-      local animation = "idle"
-    
-      if self.state.direction.x > 0 then
-        animation = "right"
-      end
-      
-      if self.state.direction.x < 0 then
-        animation = "left"
-      end
-      
-      if self.state.direction.y > 0 then
-        animation = "back"
-      end
-      
-      if self.state.direction.y < 0 then
-        animation = "forward"
-      end
-    
-      return animation
-    end
-  })
-  entity:addTag("player")
-  entity_2:addComponent(BODY_FACTORY.create_body_component{
-      position = Vec2:new{ x = 300, y = 300 },
-      velocity = Vec2:new(),
-      forces = { },
-      velocity_limit = nil
-  })
-  entity_2:addComponent(SPRITE_FACTORY.createSpriteComponent{
-    src_image = love.graphics.newImage("assets/characters/player.png"),
-    frame = love.graphics.newQuad(10, 17, 27, 47, 192, 256)
-  })
-  entity_2:addComponent(RECT_FACTORY.create_rect_component{ width = 48, height = 64 })
-  local world_system = WorldSystem:new()
-  local sprite_renderer_system = SpriteRendererSystem:new()
-  local collision_notifier = CollisionNotifier:new{ renderer_system, world_system }
-  ENGINE:load({
+  local worldSystem = WorldSystem:new()
+  local spriteRendererSystem = SpriteRendererSystem:new()
+  local collisionNotifier = CollisionNotifier:new{ worldSystem }
+  engine:load({
     SpriteAnimationSystem:new(),
-    sprite_renderer_system,
-    world_system,
+    spriteRendererSystem,
+    worldSystem,
     ControllerSystem:new(),
     CollisionSystem:new{
-      collision_notifier = collision_notifier
+      collisionNotifier = collisionNotifier
       }
     }, {
-      entity,
-      entity_2 
+      player,
+      dummy
     }
   )
   -- local image = love.graphics.newImage("assets/characters/player.png")
@@ -140,10 +55,10 @@ function love.load()
 end
 
 function love.update(dt)
-  ENGINE:input()
-  ENGINE:update(dt)
+  engine:input()
+  engine:update(dt)
 end
 
 function love.draw()
-  ENGINE:draw()
+  engine:draw()
 end

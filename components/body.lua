@@ -1,7 +1,7 @@
 require "esc/component"
-require "vec2/vec2"
+require "math/vec2"
 
-local function create_body_component(o)
+local function createBodyComponent(o)
     return Component:new{
         name = "body",
         data = o or {
@@ -14,5 +14,5 @@ local function create_body_component(o)
 end
 
 return {
-    create_body_component = create_body_component
+    createBodyComponent = createBodyComponent
 }

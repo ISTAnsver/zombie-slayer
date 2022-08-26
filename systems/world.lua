@@ -1,10 +1,10 @@
 require "esc/system"
-require "vec2/vec2"
+require "math/vec2"
 
 WorldSystem = System:new{ requirements = { components = { "body" }, tags = {} } }
 
 function WorldSystem:new(o)
-    o = o or { meter = 100, gravity = 9.8 }
+    o = o or { meter = 10, gravity = 9.8 }
     setmetatable(o, self)
     self.__index = self
     return o
@@ -19,52 +19,52 @@ function WorldSystem:update(dt, entities)
         body.forces = {}
 
         local direction = body.velocity:unit()
-        local fr_force = Vec2:new()
+        local frForce = Vec2:new()
 
         if body.velocity.x ~= 0 or body.velocity.y ~= 0 then
-            fr_force = self.gravity * 0.5 * -direction * self.meter
+            frForce = self.gravity * 0.5 * -direction * self.meter
         end
 
         if body.velocity.x ~= 0 then
-            if body.velocity.x < 0 and body.velocity.x + fr_force.x * dt > 0 then
+            if body.velocity.x < 0 and body.velocity.x + frForce.x * dt > 0 then
                 body.velocity.x = 0
-            elseif body.velocity.x > 0 and body.velocity.x + fr_force.x * dt < 0 then
+            elseif body.velocity.x > 0 and body.velocity.x + frForce.x * dt < 0 then
                 body.velocity.x = 0
             else
-                body.velocity.x = body.velocity.x + fr_force.x * dt
+                body.velocity.x = body.velocity.x + frForce.x * dt
             end
         end
 
         if body.velocity.y ~= 0 then
-            if body.velocity.y < 0 and body.velocity.y + fr_force.y * dt > 0 then
+            if body.velocity.y < 0 and body.velocity.y + frForce.y * dt > 0 then
                 body.velocity.y = 0
-            elseif body.velocity.y > 0 and body.velocity.y + fr_force.y * dt < 0 then
+            elseif body.velocity.y > 0 and body.velocity.y + frForce.y * dt < 0 then
                 body.velocity.y = 0
             else
-                body.velocity.y = body.velocity.y + fr_force.y * dt
+                body.velocity.y = body.velocity.y + frForce.y * dt
             end
         end
 
-        if body.velocity_limit ~= nil then
-            if body.velocity.x > body.velocity_limit then
-                body.velocity.x = body.velocity_limit
+        if body.velocityLimit ~= nil then
+            if body.velocity.x > body.velocityLimit * self.meter then
+                body.velocity.x = body.velocityLimit * self.meter
             end
-            if body.velocity.x < -body.velocity_limit then
-                body.velocity.x = -body.velocity_limit
+            if body.velocity.x < -body.velocityLimit * self.meter then
+                body.velocity.x = -body.velocityLimit * self.meter
             end
-            if body.velocity.y > body.velocity_limit then
-                body.velocity.y = body.velocity_limit
+            if body.velocity.y > body.velocityLimit * self.meter then
+                body.velocity.y = body.velocityLimit * self.meter
             end
-            if body.velocity.y < -body.velocity_limit then
-                body.velocity.y = -body.velocity_limit
+            if body.velocity.y < -body.velocityLimit * self.meter then
+                body.velocity.y = -body.velocityLimit * self.meter
             end
         end
 
-        body.position = body.position + body.velocity * dt
+        body.position = body.position + body.velocity * self.meter * dt
     end
 end
 
-function WorldSystem:onCollision(entity_1, entity_2)
+function WorldSystem:onCollision(entity1, entity2)
     -- do physic changes here (like velocity changing and so on) in the next iteration
 end
 

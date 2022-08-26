@@ -1,15 +1,13 @@
 require "esc/component"
+require "math/rect"
 
-local function create_rect_component(o)
+local function createRectComponent(o)
     return Component:new{
         name = "rect",
-        data = o or {
-            width = 0,
-            height = 0
-        }
+        data = o or Rect:new(nil)
     }
 end
 
 return {
-    create_rect_component = create_rect_component
+    createRectComponent = createRectComponent
 }

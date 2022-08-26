@@ -15,17 +15,13 @@ function SpriteRendererSystem:draw(entities)
     local sprite = entity:getComponent("sprite")
     local rect = entity:getComponent("rect")
     
-    -- 13 and 23 are consts calculated from real size of player sprite
-    -- 27(width) / 2 - center of sprite by x
-    -- 47(height) / 2 - center of sprite by y
-    -- 10 and 17 are offsets by x and y
-    -- need to create desc structure of this thing and after UI tool
+    -- need to create UI tool to calculate offset and size of sprite
     -- sprite must be centered in rect or rect must be equal to the sprite size
     love.graphics.draw(
-      sprite.src_image,
+      sprite.srcImage,
       sprite.frame,
-      math.floor(body.position.x + rect.width / 2 - 13),
-      math.floor(body.position.y + rect.height / 2 - 23),
+      math.floor(body.position.x + rect.center.x - sprite.dimensions.center.x),
+      math.floor(body.position.y + rect.center.y - sprite.dimensions.center.y),
       0,
       1,
       1
